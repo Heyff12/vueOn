@@ -334,7 +334,7 @@ export default {
       rules: {
         name: yanzheng.test_qd_name(this.$t('generalPro.bodyBank.qdName'), 1, 30, true, 'blur', this),
         short_name: yanzheng.test_qd_name(this.$t('generalPro.bodyBank.qdShortName'), 1, 30, true, 'blur', this),
-        legal_name: yanzheng.test_chinese(this.$t('generalPro.bodyBank.ownerNname'), 1, 4, true, 'blur', this),
+        legal_name: yanzheng.test_nonum(this.$t('generalPro.bodyBank.ownerNname'), 1, 25, true, 'blur', this),
         email: yanzheng.test_email(true, 'blur', this),
         mobile: yanzheng.test_tel(this.$t('generalPro.bodyBank.tel2'), true, 'blur', this),
         legal_idnumber: yanzheng.test_idNumber(true, 'blur', this),
@@ -727,7 +727,7 @@ export default {
     //获取省份城市列表，目前未使用改功能
     get_area: function() {
       var _this = this;
-      this.$ajax_log.ajax_get(this, this.qd_areacities_url, '', (data_return) => {
+      this.$ajax_log.ajax_get(this, this.qd_areacities_url, {'no_whole_country':1}, (data_return) => {
         _this.pro_city = data_return.data.records;
         //设置初始值
         _this.base.province = _this.pro_city[0].areaname;

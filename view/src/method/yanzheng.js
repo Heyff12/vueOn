@@ -180,6 +180,20 @@ let test_any = (lablename, min, max, require, type, that) => {
   }];
   return reg;
 }
+//验证非数字任意字符
+let test_nonum = (lablename, min, max, require, type, that) => {
+  let errtips = '请输入' + lablename + '，长度在 ' + min + ' 到 ' + max + ' 个字符';
+  if (that) {
+    errtips = that.$t('generalPro.yanzheng.input') + ' ' + lablename + '，' + that.$t('generalPro.yanzheng.length') + ' ' + min + ' ' + that.$t('generalPro.yanzheng.to') + ' ' + max + ' ' + that.$t('generalPro.yanzheng.string');
+  }
+  var reg = [{
+    required: require,
+    pattern: new RegExp('^\\D{' + min + ',' + max + '}$'),
+    message: errtips,
+    trigger: type
+  }];
+  return reg;
+}
 //邮箱验证
 let test_email = (require, type, that) => {
   let errtips = '请填写正确的邮箱';
@@ -233,6 +247,7 @@ exports.test_telephone = test_telephone
 exports.test_tel = test_tel
 exports.test_chinese = test_chinese
 exports.test_any = test_any
+exports.test_nonum = test_nonum
 exports.test_email = test_email
 exports.test_idNumber = test_idNumber
 exports.test_select = test_select

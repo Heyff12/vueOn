@@ -49,24 +49,24 @@
           </el-table-column>
           <el-table-column prop="bankname" label="收款银行" resizable min-width="180px">
           </el-table-column>
-          <el-table-column label="交易金额/元" resizable min-width="120px">
+          <el-table-column :label="'交易金额/'+$store.state.currency" resizable min-width="120px">
             <template scope="scope">
-              {{scope.row.trade_amt | yuan}}
+              {{scope.row.trade_amt | crash_format($store.state.currency)}}
             </template>
           </el-table-column>
-          <el-table-column label="交易手续费/元" resizable min-width="120px">
+          <el-table-column :label="'交易手续费/'+$store.state.currency" resizable min-width="120px">
             <template scope="scope">
-              {{scope.row.trade_fee | yuan}}
+              {{scope.row.trade_fee | crash_format($store.state.currency)}}
             </template>
           </el-table-column>
-          <el-table-column label="成本手续费/元" resizable min-width="120px">
+          <el-table-column :label="'成本手续费/'+$store.state.currency" resizable min-width="120px">
             <template scope="scope">
-              {{scope.row.cost_fee | yuan}}
+              {{scope.row.cost_fee | crash_format($store.state.currency)}}
             </template>
           </el-table-column>
-          <el-table-column label="分润金额/元" resizable min-width="110px">
+          <el-table-column :label="'分润金额/'+$store.state.currency" resizable min-width="110px">
             <template scope="scope">
-              {{scope.row.royalty_amt | yuan}}
+              {{scope.row.royalty_amt | crash_format($store.state.currency)}}
             </template>
           </el-table-column>
           <el-table-column label="操作" resizable min-width="100px">

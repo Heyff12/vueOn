@@ -1,7 +1,7 @@
 import enLocale from 'element-ui/lib/locale/lang/en'
 export default {
   languages: [{
-    text: 'Chinese',
+    text: '中文',
     val: 'zh'
   }, {
     text: 'English',
@@ -42,11 +42,11 @@ export default {
     oldPass_input: '',
     Pass_error: '6 to 20 characters',
     newPass_input: '',
-    newPass2_input: '',
+    newPass2_input: '6 to 20 characters',
     newPass2_error: '2 passwords does not match',
-    noticeD: '公告详情',
-    noticeTitle: '公告标题',
-    noticeDetail: '公告内容',
+    noticeD: '公告详情',//no
+    noticeTitle: '公告标题',//no
+    noticeDetail: '公告内容',//no
     timeout: 'Time Out',
     dataLoading: 'Loading',
     save: 'Save',
@@ -63,6 +63,10 @@ export default {
     return:'Return',
     modify:'Modify',
     unitMoneyBack:'',//USD-废弃
+    scan:'Details',
+    ifSureMend:'Confirm Modify?',   
+    saveSure:'Submit',  
+    fixSuccess:'Success!',  
   },
   yanzheng: {
     qdNum: 'Please enter agent number, numbers only',
@@ -88,6 +92,14 @@ export default {
     idNumber: 'ID No.',
     picture: 'Photo',
     pictureLength: 'Photo size should be less than 10m',
+    selBank: 'Bank',
+    selBranchBank: 'Branch',
+    selProvince: 'Province/State',
+    selCity: 'City',
+    bankaccount: 'Enter bank account No. 1 to 50 characters',
+    selBankType: 'Select Settlement Type',
+    selCardType: 'Select Account Type',
+    cardOwnerName: 'Please enter Account Name 1 to 25 characters',
   },
   login: {
     qdSystem: 'QF Pay Agent System',
@@ -110,6 +122,10 @@ export default {
       chinese: 'Chinese',   
       inputSlect: 'Select ',   
     },
+    options:{      
+      toPrivate: 'Personal Account', //no
+      toPublic: 'Company Account', //no
+    },
     searchBank:{
       qdNum:'Agent No.：',
       qdName:'Agent Name：',
@@ -124,7 +140,7 @@ export default {
       salesman:'Sales Rep.：',
       sonMer:'Sub-Merchant No.：', 
       auditStatus:'Audit State：',
-      auditStatusD:'Please select Audit Status', 
+      auditStatusD:'Please select Audit Status',  //多项选择，单独处理--商户管理列表搜索栏
       salesmanNum:'Sales Rep. No.：',
       salesmanName:'Sales Rep. Name：',
       salesmanStatus:'State：', 
@@ -142,6 +158,10 @@ export default {
       tradeStyle:'Type：',
       tradeStatus:'State：',
       tradeDes:'Description：',
+      backout:'Canceled',
+      refund:'Refunded',
+      reverse:'Canceled (Abnormal Transaction)',
+      orig_ssn: 'Source Transaction ID:', 
     },
     bodyBank:{
       qdNum:'Agent No.',
@@ -198,9 +218,9 @@ export default {
       startMoney: 'Min Payout Amount', 
       wechartFee: 'Wechat Fee Rate', 
       zfbFee:'Alipay Fee Rate',
-      qqFee: 'QQ钱包成本费率', 
-      jdFee: '京东钱包成本费率', 
-      cardFee: '刷卡成本费率', 
+      qqFee: 'QQ钱包成本费率', //no
+      jdFee: '京东钱包成本费率', //no
+      cardFee: '刷卡成本费率', //no
       defaultFee: 'Default Fee Rate', 
       qdType: 'Agent Type', 
       ownerId: ' Agent ID', 
@@ -224,12 +244,15 @@ export default {
       companyLogo: 'Company LOGO',
       companyIcon: 'Company ICON',
       businessLicense: 'Business License',
-      openAccounts: '开户许可证',
+      openAccounts: '开户许可证',//no
       uploadFile: 'Upload',
       qdAddr: 'Agent Address', 
       familyName: 'Name',
       qdManagerName: 'Agent Manager Name', 
       serverManagerName: 'Service Manager Name', 
+      orig_ssn: 'Source Transaction ID', 
+      channel_relationships: 'Agents',
+      qdLevel: 'Agent Level',
     },
   },
   home: {
@@ -277,12 +300,40 @@ export default {
       feeDetail:'Fee Rate Details',
       feeWeixin:'Wechat',
       feeBao:'Alipay',
-      feeJd:'京东费率',
-      feeQQ:'QQ钱包费率',
-      feeCard:'刷卡费率',
+      feeJd:'JD Pay',
+      feeQQ:'QQ Pay',
+      feeCard:'Credit Card',
       settleCycle:'Payout Cycle',   
       tipS:'Are you sure you want to',
-      tipE:'the merchant',          
+      tipE:'the merchant',  
+      merch_detail:' Merchant Details',  
+      baseInfo:'Basic Info',
+      bankInfo:'Bank Account Details',  
+      shopInfo:'Shop Info',  
+      merch_style:'Merchant Type:',  
+      mobile:'Phone No.:',  
+      signed_entity:'Legal Entity:',  
+      legal_name:'Representative:',    
+      legal_idnumber:'ID No.:',  
+      province:'Province/State:',  
+      city:'City:',  
+      accountname:'Account Name:',   
+      headbankname:'Bank:',  
+      bankname:'Branch:',  
+      bankaccount:'Bank Account:',  
+      banktype:' Account Type:',   
+      bank_mobile:'Phone No. with Bank:',  
+      bankstatus:'Bank Account Status:',  
+      receiptname:'Receipt Title:', 
+      mcc:'MCC:',   
+      address:'Address:',    
+      bank_city:'Bank City:', 
+      getMoneyBank:'Payout Bank:',   
+      bankAccountName:'Account No.:',   
+      bankOwnerName:'Account Name:',     
+      cardType:'Account Type:',        
+      settleType:'Settlement Type:',          
+      noMend:'银行卡已在审核中，请耐心等待',  
     },
   },
   salesmanlList: {

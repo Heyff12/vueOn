@@ -2,7 +2,7 @@
     <div>
         <div class="right_head">
             {{$t('tradelDetail.titleBank.title')}} --
-            <span v-if="detail.trade_status=='成功'" class="orange">{{detail.trade_status}}</span><span class="red" v-else>{{detail.trade_status}}</span> 
+            <span v-if="detail.trade_status_desc=='成功'" class="orange">{{detail.trade_status_desc}}</span><span class="red" v-else>{{detail.trade_status_desc}}</span> 
         </div>
         <div class="right_body">
             <el-form ref="trade" label-width="125px" class="demo-ruleForm">
@@ -29,13 +29,18 @@
                             </el-form-item>
                         </el-col>
                         <el-col :xs="24" :sm="24" :md="12" :lg="8">
+                            <el-form-item :label="$t('generalPro.searchBank.orig_ssn')">
+                                <span class="word">{{detail.orig_ssn}}</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :xs="24" :sm="24" :md="12" :lg="8">
                             <el-form-item :label="$t('generalPro.searchBank.orderNum')">
                                 <span class="word">{{detail.out_trade_no}}</span>
                             </el-form-item>
                         </el-col>
                         <el-col :xs="24" :sm="24" :md="12" :lg="8">
                             <el-form-item :label="$t('generalPro.searchBank.tradePrice')">
-                                <span class="word">{{$store.state.currency}}{{(detail.trade_amt/100).toFixed(2)}}</span>
+                                <span class="word">{{$store.state.currency}}{{detail.trade_amt | crash_format($store.state.currency)}}</span>
                             </el-form-item>
                         </el-col>
                        <!--  <el-col :xs="24" :sm="24" :md="12" :lg="8">
@@ -55,7 +60,7 @@
                         </el-col>
                         <el-col :xs="24" :sm="24" :md="12" :lg="8">
                             <el-form-item :label="$t('generalPro.searchBank.tradeStatus')">
-                                <span class="word">{{detail.trade_status}}</span>
+                                <span class="word">{{detail.trade_status_desc}}</span>
                             </el-form-item>
                         </el-col>
                         <el-col :xs="24" :sm="24" :md="12" :lg="8">
@@ -84,11 +89,13 @@ export default {
                 "mchnt_uid": 0, // 商户 userid
                 "mchnt_name": "", // 商户名
                 "trade_syssn": "", // 交易流水号
+                "orig_ssn": "", // 原交易流水号
                 "trade_amt": 0, // 交易金额, 单位为分
                 "trade_fee": 0, // 手续费, 单位分
                 "trade_dtm": "", // 交易时间
                 "trade_type": "", // 交易类型
                 "trade_status": "", // 交易状态
+                "trade_status_desc": "", // 交易状态描述
                 "trade_msg": "", // 交易失败原因
                 "mchnt_mobile": "", // 手机号
                 "slsm_name": "", // 业务员姓名

@@ -45,6 +45,10 @@
                     </el-table-column>
                     <el-table-column prop="end_time" label="失效时间" resizable min-width="120px">
                     </el-table-column>
+                    <el-table-column prop="display_page_str" label="广告位置" resizable min-width="100px">
+                    </el-table-column>
+                    <el-table-column prop="weight" label="广告权重" resizable min-width="100px">
+                    </el-table-column>
                     <el-table-column prop="update_time" label="最后操作时间" resizable min-width="120px">
                     </el-table-column>
                     <el-table-column prop="status" label="状态" resizable min-width="120px">
@@ -78,12 +82,24 @@
                 <el-form-item label="广告名称" prop="name">
                     <el-input v-model="add_ader.name" type="text" auto-complete="off" @blur="if_right"></el-input>
                 </el-form-item>
-                <el-form-item label="广告链接" prop="orig_url">
-                    <el-input v-model="add_ader.orig_url" type="text" auto-complete="off" @blur="if_right"></el-input>
+                <el-form-item label="广告链接" prop="origin_url">
+                    <el-input v-model="add_ader.origin_url" type="text" auto-complete="off" @blur="if_right"></el-input>
+                </el-form-item>
+                <el-form-item label="图片链接" prop="image_url">
+                    <el-input v-model="add_ader.image_url" type="text" auto-complete="off" @blur="if_right"></el-input>
                 </el-form-item>
                 <el-form-item label="有效时间区间：">
                     <el-date-picker v-model="add_ader.daterange" type="daterange" align="right" placeholder="选择有效时间范围" :picker-options="pickerOptions_erea" :editable="false" @change="time_change">
                     </el-date-picker>
+                </el-form-item>
+                <el-form-item label="广告位置" prop="display_page">
+                    <el-select v-model="add_ader.display_page" placeholder="请选择广告位置">
+                        <el-option label="支付完成页" value="1"></el-option>
+                        <el-option label="支付完成页-品牌广告" value="2"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="广告权重" prop="weight">
+                    <el-input v-model="add_ader.weight" type="text" auto-complete="off" @blur="if_right"></el-input>
                 </el-form-item>
                 <el-form-item label="生效状态" prop="status">
                     <el-select v-model="add_ader.status" placeholder="请选择状态">
@@ -96,7 +112,11 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="">
+                    <template v-if="if_right_class==true && if_clickSure==true">
+                    <span class="bounced_button bounced_sure">保存</span></template>
+                    <template v-else>                        
                     <span class="bounced_button bounced_sure" v-bind:class="{bounced_sure_right:if_right_class}" @click="add_ader_sub">保存</span>
+                    </template>
                     <span class="bounced_button bounced_cancle" @click="add_ad = false">取消</span>
                 </el-form-item>
             </el-form>
@@ -154,16 +174,20 @@ export default {
             big_bounced: 'big_bounced mar_t_exp', //弹框特殊样式--大弹框
             add_or_fix: true, //操作是添加or编辑,true 添加
             if_right_class: false, //弹框输入内容是否都正确，都正确，增加类 显示橙色，否则 灰色
+            if_clickSure: false,//是否点击了确定按钮---配合if_right_class判断是否可以再次点击
             now_id: '', //当前正在编辑的广告id
             target_url: '', //生成的跳转链接
             add_ader: {
                 "name": "",
-                "orig_url": "",
+                "origin_url": "",
                 "end_time": "",
                 "start_time": "",
                 "status": "1",
                 "memo": "",
                 "daterange": "",
+                "weight": "",
+                "display_page": "1",
+                "image_url": "",
             },
             add_ader_rules: {
                 name: [{
@@ -175,8 +199,17 @@ export default {
                     max: 30,
                     trigger: 'blur'
                 }],
-                orig_url: [{
+                origin_url: [{
                     required: true,
+                    pattern: /^(http)/,
+                    message: '请输入广告链接，长度在 0 到 500 个字符',
+                    min: 0,
+                    max: 500,
+                    trigger: 'blur'
+                }],
+                image_url: [{
+                    required: false,
+                    pattern: /^(http)/,
                     message: '请输入广告链接，长度在 0 到 500 个字符',
                     min: 0,
                     max: 500,
@@ -193,7 +226,7 @@ export default {
                     trigger: 'blur'
                 }],
                 status: [{
-                    require: false,
+                    required: false,
                     message: '请选择生效状态',
                     trigger: 'change',
                 }],
@@ -202,6 +235,17 @@ export default {
                     message: '请输入官网地址，长度在 0 到 200 个字符',
                     min: 0,
                     max: 200,
+                    trigger: 'blur'
+                }],
+                display_page: [{
+                    required: true,
+                    message: '请选择广告位置',
+                    trigger: 'change',
+                }],
+                weight: [{
+                    required: true,
+                    pattern: /^[0-9]{1,100000000000}$/,
+                    message: '请输入数字',
                     trigger: 'blur'
                 }],
                 // daterange: [{
@@ -361,6 +405,7 @@ export default {
         },
         //点击添加按钮
         add_open: function() {
+            this.if_clickSure = false;
             this.add_or_fix = true; //添加状态
             this.$refs.add_ader.resetFields(); //重置表单
             this.if_right_class = false; //确定按钮--恢复灰色
@@ -370,28 +415,34 @@ export default {
         },
         //点击修改按钮
         fix_open: function(val) {
+            this.if_clickSure = false;
             this.add_or_fix = false; //添加状态
             this.$refs.add_ader.resetFields(); //重置表单
             this.if_right_class = true; //确定按钮--显示橙色
             this.add_ader.daterange = ''; //日期区间置空
             this.add_ader = {
                 "name": val.name,
-                "orig_url": val.orig_url,
+                "origin_url": val.origin_url,
+                "image_url": val.image_url,
                 "end_time": val.end_time,
                 "start_time": val.start_time,
                 "status": val.status.toString(),
                 "memo": val.memo,
                 "daterange": [this.get_datetime(val.start_time), this.get_datetime(val.end_time)],
+                "weight": val.weight,
+                "display_page": val.display_page.toString(),
             }; //填充内容
             this.now_id = val.id; //获取当前广告id
             this.add_ad = true; //打开弹框
         },
         //点击确定
         add_ader_sub: function() {
+            this.if_clickSure = true;
             let _this = this;
             this.$refs.add_ader.validate((valid) => {
                 if (valid) {
-                    _this.to_sub();
+                    //_this.to_sub();
+                    _this.adder_sub();
                 } else {
                     return false;
                 }
@@ -405,7 +456,7 @@ export default {
             post_data = {
                 "name": this.add_ader.name,
                 "status": this.add_ader.status,
-                "orig_url": this.add_ader.orig_url,
+                "origin_url": this.add_ader.origin_url,
                 //"ownerid":"",
             };
             this.$http.post(this.adder_to_url, post_data, {
@@ -445,12 +496,15 @@ export default {
             let url_now;
             let post_data = {
                 "name": this.add_ader.name,
-                "target_url": this.target_url,
+                //"target_url": this.target_url,
+                "origin_url": this.add_ader.origin_url,
+                "image_url": this.add_ader.image_url,
                 "end_time": this.add_ader.end_time,
                 "start_time": this.add_ader.start_time,
                 "status": this.add_ader.status,
                 "memo": this.add_ader.memo,
-                //"weight":'1',
+                "weight": this.add_ader.weight,
+                "display_page": this.add_ader.display_page,
             };
             if (this.add_or_fix) {
                 url_now = this.adder_url;
@@ -470,6 +524,7 @@ export default {
                     var data_return = response.body;
                     if (data_return.respcd == '0000') {
                         _this.get_list(); //重新获取列表信息
+                        _this.add_ad = false; //打开弹框
                     } else {
                         if (data_return.respmsg) {
                             _this.toastmsg = data_return.respmsg;
@@ -528,7 +583,7 @@ export default {
                 "update_time": "2017-03-01",
                 "status": '0',
                 "memo": "收款行总行",
-                "orig_url": "http://yaya12.com",
+                "origin_url": "http://yaya12.com",
             }, {
                 "id": 11111115,
                 "name": "渠道名称",
@@ -537,7 +592,7 @@ export default {
                 "update_time": "2017-03-01",
                 "status": '1',
                 "memo": "收款行总行",
-                "orig_url": "http://yaya12.com",
+                "origin_url": "http://yaya12.com",
             }, {
                 "id": 11111115,
                 "name": "渠道名称",
@@ -546,7 +601,7 @@ export default {
                 "update_time": "2017-03-01",
                 "status": '0',
                 "memo": "收款行总行",
-                "orig_url": "http://yaya12.com",
+                "origin_url": "http://yaya12.com",
             }, {
                 "id": 11111115,
                 "name": "渠道名称",
@@ -555,7 +610,7 @@ export default {
                 "update_time": "2017-03-01",
                 "status": '1',
                 "memo": "收款行总行",
-                "orig_url": "http://yaya12.com",
+                "origin_url": "http://yaya12.com",
             }, {
                 "id": 11111115,
                 "name": "渠道名称",
@@ -564,7 +619,7 @@ export default {
                 "update_time": "2017-03-01",
                 "status": '0',
                 "memo": "收款行总行",
-                "orig_url": "http://yaya12.com",
+                "origin_url": "http://yaya12.com",
             }, {
                 "id": 11111115,
                 "name": "渠道名称",
@@ -573,7 +628,7 @@ export default {
                 "update_time": "2017-03-01",
                 "status": 1,
                 "memo": "收款行总行",
-                "orig_url": "http://yaya12.com",
+                "origin_url": "http://yaya12.com",
             }, {
                 "id": 11111115,
                 "name": "渠道名称",
@@ -582,7 +637,7 @@ export default {
                 "update_time": "2017-03-01",
                 "status": '0',
                 "memo": "收款行总行",
-                "orig_url": "http://yaya12.com",
+                "origin_url": "http://yaya12.com",
             }, {
                 "id": 11111115,
                 "name": "渠道名称",
@@ -591,7 +646,7 @@ export default {
                 "update_time": "2017-03-01",
                 "status": '1',
                 "memo": "收款行总行",
-                "orig_url": "http://yaya12.com",
+                "origin_url": "http://yaya12.com",
             }, {
                 "id": 11111115,
                 "name": "渠道名称",
@@ -600,7 +655,7 @@ export default {
                 "update_time": "2017-03-01",
                 "status": '0',
                 "memo": "收款行总行",
-                "orig_url": "http://yaya12.com",
+                "origin_url": "http://yaya12.com",
             }, {
                 "id": 11111115,
                 "name": "渠道名称",
@@ -609,7 +664,7 @@ export default {
                 "update_time": "2017-03-01",
                 "status": '1',
                 "memo": "收款行总行",
-                "orig_url": "http://yaya12.com",
+                "origin_url": "http://yaya12.com",
             }, ];
             _this.table_data = _this.trades;
             _this.pages_all = 100;

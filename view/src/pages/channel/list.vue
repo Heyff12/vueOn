@@ -44,8 +44,8 @@
           </el-table-column>
           <el-table-column :label="$t('generalPro.bodyBank.qdStatus')" resizable>
             <template scope="scope">
-              <span v-if="scope.row.base.status">{{$t('generalPro.searchBank.active')}}</span>
-              <span v-else>{{$t('generalPro.searchBank.inactive')}}</span>
+              <span v-if="scope.row.base.status">{{$t('generalPro.searchBank.inactive')}}</span>
+              <span v-else>{{$t('generalPro.searchBank.active')}}</span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('generalPro.bodyBank.baseInfo')" resizable min-width="100px">
@@ -67,6 +67,11 @@
               <router-link :to="{ name: 'channel_pro',params: { userid: scope.row.base.userid }}">
                 <el-button type="text">{{$t('app.clickScan')}}</el-button>
               </router-link>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('generalPro.bodyBank.channel_relationships')" resizable min-width="100px">
+            <template scope="scope">
+              <el-button type="text" @click="scan_relation(scope.row.base.userid)">{{$t('app.clickScan')}}</el-button>
             </template>
           </el-table-column>
           <el-table-column prop="base.join_dtm" :label="$t('generalPro.bodyBank.regTime')" resizable min-width="170px">
@@ -105,6 +110,25 @@
         <span class="bounced_button bounced_cancle" @click="opratedialog = false">{{$t('app.cancle')}}</span>
       </p>
     </bounced>
+    <bounced :visible="relationdialog" :newclass="big_bounced">
+      <span slot="header">{{$t('generalPro.bodyBank.channel_relationships')}}<i class="close"  @click="relationdialog=false"></i></span>
+      <el-table :data="relations_data" border stripe style="width: 100%">
+        <el-table-column :label="$t('generalPro.bodyBank.qdNum')" prop="qd_uid" resizable min-width="100px">
+        </el-table-column>
+        <el-table-column :label="$t('generalPro.bodyBank.qdName')" prop="name" resizable min-width="100px">
+        </el-table-column>
+        <el-table-column :label="$t('generalPro.bodyBank.qdShortName')" prop="short_name" resizable min-width="100px">
+        </el-table-column>
+        <el-table-column :label="$t('generalPro.bodyBank.qdStatus')" resizable min-width="100px">
+          <template scope="scope">
+            <span v-if="scope.row.status">{{$t('generalPro.searchBank.inactive')}}</span>
+            <span v-else>{{$t('generalPro.searchBank.active')}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('generalPro.bodyBank.qdLevel')" prop="level" resizable min-width="100px">
+        </el-table-column>
+      </el-table>
+    </bounced>
     <load :visible="loading"></load>
     <toast :msg="toastmsg" :visible="visible_toast" @on-visible-change="onVisibleChange" @on-msg-change="onMsgChange"></toast>
   </div>
@@ -129,7 +153,8 @@ export default {
       channels: [],
       list_url: location.protocol + '//' + location.host + '/qudao/v1/api/qd/list', //获取渠道信息列表
       chan_url: location.protocol + '//' + location.host + '/qudao/v1/api/qd/', //渠道开启停用  
-      down_url: location.protocol + '//' + location.host + '/qudao/v1/api/qd/list/download', //下载  
+      down_url: location.protocol + '//' + location.host + '/qudao/v1/api/qd/list/download', //下载   
+      relation_url: location.protocol + '//' + location.host + '/qudao/v1/api/qd/', //获取关系 
       pages_all: 0, //总信息数
       page_per: 20, //每页信息数
       pages: 1, //总页数
@@ -145,6 +170,15 @@ export default {
         }],
         name: yanzheng.test_qd_name(this.$t('generalPro.bodyBank.qdName'), 1, 30, false, 'blur', this),
       },
+      relationdialog: false, //关系弹框
+      big_bounced: 'big_bounced', //渠道关系样式
+      relations_data: [{
+        "qd_uid": '', // 渠道 userid
+        "name": "",
+        "short_name": "",
+        "status": "",
+        "level": 1 // 渠道级别
+      }], //关系数据
     }
   },
   created: function() {
@@ -379,6 +413,13 @@ export default {
         } else {
           return false;
         }
+      });
+    },
+    //查看关系
+    scan_relation: function(id) {
+      this.$ajax_log.ajax_get(this, this.relation_url + id + '/relation', '', (data_return) => {
+        this.relationdialog = true; //打开弹框
+        this.relations_data = data_return.data.records; //赋值
       });
     },
     //测试列表数据--仅供测试

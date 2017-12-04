@@ -16,6 +16,8 @@ require('./mock_salesman');
 require('./mock_trade');
 //培训资料
 require('./mock_material');
+//广告
+require('./mock_ad');
 // 使用 Mock
 var Mock = require('mockjs');
 //渠道基本信息

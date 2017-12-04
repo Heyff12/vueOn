@@ -86,12 +86,12 @@
                 <el-col :xs="24" :sm="24" :md="24" :lg="24">
                   <div class="clearfix_liner1"></div>
                   <div class="add_quyu">
-                    <el-button type="primary" icon="plus" @click="add_quyu"  :disabled="pro_authcity_len<=0">增加授权区域</el-button>
+                    <el-button type="primary" icon="plus" @click="add_quyu" :disabled="pro_authcity_len<=0">增加授权区域</el-button>
                   </div>
                 </el-col>
                 <template v-for="(item,index) in base.auth_areas">
                   <el-col :xs="24" :sm="24" :md="12" :lg="8">
-                    <el-form-item label="授权省份" :prop="'auth_areas.' + index + '.auth_province'" :key="item.key"  :rules="[{required: true,message: '请选择所在授权省份',trigger: 'change'}]">
+                    <el-form-item label="授权省份" :prop="'auth_areas.' + index + '.auth_province'" :key="item.key" :rules="[{required: true,message: '请选择所在授权省份',trigger: 'change'}]">
                       <el-select v-model="item.auth_province" placeholder="请选择授权省份" v-on:change="select_authpro(index)" filterable>
                         <el-option v-for="auth_province in pro_authcity" v-bind:areaid="auth_province.areaid" v-bind:value="auth_province.areaname" v-bind:label="auth_province.areaname">
                         </el-option>
@@ -184,30 +184,30 @@
                   </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                    <div class="clearfix_liner1"></div>
+                  <div class="clearfix_liner1"></div>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="12" :lg="8">
-                <el-form-item label="渠道经理" prop="manager_name">
+                  <el-form-item label="渠道经理" prop="manager_name">
                     <el-input v-model="base.manager_name" placeholder="姓名"></el-input>
-                </el-form-item>
+                  </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="12" :lg="8">
-                    <el-form-item label="渠道经理手机号" prop="manager_mobile">
-                        <el-input v-model="base.manager_mobile"></el-input>
-                    </el-form-item>
+                  <el-form-item label="渠道经理手机号" prop="manager_mobile">
+                    <el-input v-model="base.manager_mobile"></el-input>
+                  </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                    <div class="clearfix"></div>
+                  <div class="clearfix"></div>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="12" :lg="8">
-                    <el-form-item label="服务经理" prop="service_manager_name">
-                        <el-input v-model="base.service_manager_name" placeholder="姓名"></el-input>
-                    </el-form-item>
+                  <el-form-item label="服务经理" prop="service_manager_name">
+                    <el-input v-model="base.service_manager_name" placeholder="姓名"></el-input>
+                  </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="12" :lg="8">
-                    <el-form-item label="服务经理电话" prop="service_manager_mobile">
-                        <el-input v-model="base.service_manager_mobile"></el-input>
-                    </el-form-item>
+                  <el-form-item label="服务经理电话" prop="service_manager_mobile">
+                    <el-input v-model="base.service_manager_mobile"></el-input>
+                  </el-form-item>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="24" :lg="24">
                   <div class="clearfix_liner1"></div>
@@ -362,7 +362,7 @@
                 <el-col :xs="24" :sm="24" :md="12" :lg="8">
                   <el-form-item label="起结金额" prop="settle_base_amt">
                     <el-input v-model.number="account.settle_base_amt">
-                      <template slot="append">元</template>
+                      <template slot="append">{{$store.state.currency}}</template>
                     </el-input>
                   </el-form-item>
                 </el-col>
@@ -462,6 +462,7 @@
 </template>
 <script>
 import yanzheng from '../../method/yanzheng'
+import util from '../../method/util'
 export default {
   name: 'channel_index',
   data() {
@@ -571,11 +572,11 @@ export default {
         "country": "", // 国家
         "timezone": "", // 时区
         "currency": "", // 币种
-        'auth_areas': [{ "auth_province": "", "auth_city": ""}], //地址列表-----------地址列表
-        "manager_name": "",                   // 渠道经理
-        "manager_mobile": "",          // 渠道经理电话
-        "service_manager_name": "",           // 渠道服务经理
-        "service_manager_mobile": "",  // 渠道服务经理电话
+        'auth_areas': [{ "auth_province": "", "auth_city": "" }], //地址列表-----------地址列表
+        "manager_name": "", // 渠道经理
+        "manager_mobile": "", // 渠道经理电话
+        "service_manager_name": "", // 渠道服务经理
+        "service_manager_mobile": "", // 渠道服务经理电话
       },
       account: {
         "bankaccount": "", // 收款账户(网点账户号)
@@ -616,8 +617,9 @@ export default {
         short_name: yanzheng.test_qd_name('渠道简称', 1, 30, true, 'blur'),
         legal_name: [{
           required: true,
-          pattern: /^[\u4e00-\u9fa5]{1,4}$/,
-          message: '请输入法人名称，长度在 1 到 4 个字符',
+          //pattern: /^[\u4e00-\u9fa5]{1,4}$/,
+          pattern: /^\D{1,25}$/,
+          message: '请输入法人名称，长度在 1 到 25 个字符',
           trigger: 'blur'
         }],
         email: [{
@@ -761,16 +763,17 @@ export default {
           message: '请选择所在城市',
           trigger: 'change'
         }],
-        manager_name: yanzheng.test_chinese('渠道经理姓名',1,4,false,'blur'),
-        manager_mobile: yanzheng.test_tel('渠道经理手机号',false,'blur'),
-        service_manager_name:yanzheng.test_chinese('服务经理姓名',1,4,false,'blur'),
-        service_manager_mobile: yanzheng.test_telephone('服务经理电话',false,'blur'),
+        manager_name: yanzheng.test_chinese('渠道经理姓名', 1, 4, false, 'blur'),
+        manager_mobile: yanzheng.test_tel('渠道经理手机号', false, 'blur'),
+        service_manager_name: yanzheng.test_chinese('服务经理姓名', 1, 4, false, 'blur'),
+        service_manager_mobile: yanzheng.test_telephone('服务经理电话', false, 'blur'),
       },
       rules_account: {
         bankuser: [{
           required: true,
-          pattern: /^[\u4e00-\u9fa5]{1,30}$/,
-          message: '请输入收款账户，长度在 1 到 30 个字符',
+          //pattern: /^[\u4e00-\u9fa5]{1,30}$/,
+          pattern: /^\D{1,25}$/,
+          message: '请输入收款账户，长度在 1 到 25 个字符',
           trigger: 'blur'
         }],
         bankaccount: [{
@@ -879,17 +882,18 @@ export default {
     //this.get_products(); //获取产品列表--获取userid后调用--已取消
     this.get_products_new(); //获取产品列表
     //设置下拉选项的初始值
-    this.account.settle_base_amt = (this.account.settle_base_amt / 100).toFixed(0);
+    //this.account.settle_base_amt = (this.account.settle_base_amt / 100).toFixed(0);
+    this.account.settle_base_amt = util.crash_enlarge_format(this.account.settle_base_amt, this.$store.state.currency)
     //给预注册的3个信息初次赋值
     this.email_pre = this.base.email;
     this.mobile_pre = this.base.mobile;
     this.idnumber_pre = this.base.legal_idnumber;
     //this.get_branchbank();//测试
   },
-  computed:{
-      pro_authcity_len:function(){
-          return this.pro_authcity.length;
-      }
+  computed: {
+    pro_authcity_len: function() {
+      return this.pro_authcity.length;
+    }
   },
   watch: {
     // product: {
@@ -950,8 +954,10 @@ export default {
       for (let i = 0; i < this.pro_city.length; i++) {
         if (this.pro_city[i].areaname == this.base.province) {
           this.citys = this.pro_city[i].cities;
-          this.base.city = this.citys[0].cityname;
-          this.city_id = this.citys[0].cityid;
+          setTimeout(() => {
+            this.base.city = this.citys[0].cityname;
+            this.city_id = this.citys[0].cityid;
+          }, 0);
           return false;
         } else {
           this.citys = [];
@@ -1120,8 +1126,8 @@ export default {
             _this.get_userid();
           } else {
             _this.showli_one2();
+            _this.one_over = true;
           }
-          _this.one_over = true;
         } else {
           _this.one_over = false;
           return false;
@@ -1208,7 +1214,8 @@ export default {
       //     _this.visible_toast = true;
       //     return false;
       // }
-      _this.account.settle_base_amt = _this.account.settle_base_amt * 100; //起结金额单位换算成分
+      //_this.account.settle_base_amt = _this.account.settle_base_amt * 100; //起结金额单位换算成分
+      _this.account.settle_base_amt = util.crash_enlarge_format(_this.account.settle_base_amt, _this.$store.state.currency); //起结金额单位换算成分
       //如果没有上传一下两个图片，设置值为空
       if (_this.base.business_license_url == '/qudao/v1/static/login/img/ic_img.png') {
         _this.base.business_license_url = '';
@@ -1243,8 +1250,9 @@ export default {
             _this.product = []; //清空产品选择情况
             _userid = '';
           } else {
-            _this.account.settle_base_amt = (_this.account.settle_base_amt / 100).toFixed(0); //起结金额单位还原成元
-            _this.base.business_license_url = '/qudao/v1/static/login/img/ic_img.png';//非必填图片还原默认图标
+            //_this.account.settle_base_amt = (_this.account.settle_base_amt / 100).toFixed(0); //起结金额单位还原成元
+            _this.account.settle_base_amt = util.crash_if_format(_this.account.settle_base_amt, _this.$store.state.currency);
+            _this.base.business_license_url = '/qudao/v1/static/login/img/ic_img.png'; //非必填图片还原默认图标
             _this.base.bank_account_url = '/qudao/v1/static/login/img/ic_img.png';
             if (data_return.respmsg) {
               _this.toastmsg = data_return.respmsg;
@@ -1254,16 +1262,20 @@ export default {
             _this.visible_toast = true;
           }
         }, function(response) {
-          _this.account.settle_base_amt = (_this.account.settle_base_amt / 100).toFixed(0); //起结金额单位还原成元
-          _this.base.business_license_url = '/qudao/v1/static/login/img/ic_img.png';//非必填图片还原默认图标
+          //_this.account.settle_base_amt = (_this.account.settle_base_amt / 100).toFixed(0); //起结金额单位还原成元
+          _this.account.settle_base_amt = util.crash_if_format(_this.account.settle_base_amt, _this.$store.state.currency);
+          _this.base.business_license_url = '/qudao/v1/static/login/img/ic_img.png'; //非必填图片还原默认图标
           _this.base.bank_account_url = '/qudao/v1/static/login/img/ic_img.png';
           _this.loading = false;
           _this.visible_toast = true;
           _this.toastmsg = '网络超时!';
         })
         .catch(function(response) {
-          _this.account.settle_base_amt = (_this.account.settle_base_amt / 100).toFixed(0); //起结金额单位还原成元
-          _this.base.business_license_url = '/qudao/v1/static/login/img/ic_img.png';//非必填图片还原默认图标
+          _this.base.business_license_url = '/qudao/v1/static/login/img/ic_img.png'; //非必填图片还原默认图标
+          _this.base.bank_account_url = '/qudao/v1/static/login/img/ic_img.png';
+          //_this.account.settle_base_amt = (_this.account.settle_base_amt / 100).toFixed(0); //起结金额单位还原成元
+          _this.account.settle_base_amt = util.crash_if_format(_this.account.settle_base_amt, _this.$store.state.currency);
+          _this.base.business_license_url = '/qudao/v1/static/login/img/ic_img.png'; //非必填图片还原默认图标
           _this.base.bank_account_url = '/qudao/v1/static/login/img/ic_img.png';
           _this.loading = false;
         });
@@ -1381,6 +1393,7 @@ export default {
             _this.email_pre = _this.base.email;
             _this.mobile_pre = _this.base.mobile;
             _this.idnumber_pre = _this.base.legal_idnumber;
+            _this.one_over = true;
             //调用可用产品--已取消
             //_this.get_products();
           } else {
@@ -1390,14 +1403,17 @@ export default {
               _this.toastmsg = data_return.resperr;
             }
             _this.visible_toast = true;
+            _this.one_over = false;
           }
         }, function(response) {
           _this.loading = false;
           _this.visible_toast = true;
           _this.toastmsg = '网络超时!';
+            _this.one_over = false;
         })
         .catch(function(response) {
           _this.loading = false;
+          _this.one_over = false;
         });
       // _this.userid = '125tghgjh';
       // _this.showli_one2();
@@ -1598,6 +1614,7 @@ export default {
     get_area: function() {
       var _this = this;
       _this.$http.get(_this.qd_areacities_url, {
+          params: { 'no_whole_country': 1 },
           before: function() {
             _this.loading = true;
           }
@@ -1704,8 +1721,16 @@ export default {
           if (data_return.respcd == '0000') {
             _this.branchbanks = data_return.data.records;
             //设置初始值
-            _this.account.bankname = _this.branchbanks[0].name;
-            _this.account.bankcode = _this.branchbanks[0].bankcode;
+            setTimeout(() => {
+              if (_this.branchbanks.length <= 0) {
+                _this.account.bankname = '';
+                _this.account.bankcode = '';
+              } else {
+                _this.account.bankname = _this.branchbanks[0].name;
+                _this.account.bankcode = _this.branchbanks[0].bankcode;
+              }
+            }, 0);
+
           } else {
             if (data_return.respmsg) {
               _this.toastmsg = data_return.respmsg;
@@ -1861,7 +1886,7 @@ export default {
       var citys_first = this.pro_authcity[0].cities;
       //var countys_first = this.pro_authcity[0].cities[0].county;
       // var new_sca = { "auth_province": this.pro_authcity[0].areaname, "auth_city": citys_first[0].cityname, "auth_county": countys_first[0].countyname };
-      var new_sca = { "auth_province": this.pro_authcity[0].areaname, "auth_city": citys_first[0].cityname};
+      var new_sca = { "auth_province": this.pro_authcity[0].areaname, "auth_city": citys_first[0].cityname };
       var new_citys = { 'citys': citys_first };
       //var new_countys = { 'countys': countys_first };
       this.authcitys.push(new_citys);

@@ -10,6 +10,7 @@ var webpackConfig = require('./webpack.dev.conf')
 
 // default port where dev server listens for incoming traffic
 var port = process.env.PORT || config.dev.port
+var ip = config.dev.ip
 // Define HTTP proxies to your custom API backend
 // https://github.com/chimurai/http-proxy-middleware
 var proxyTable = config.dev.proxyTable
@@ -56,13 +57,20 @@ app.use(hotMiddleware)
 var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
 app.use(staticPath, express.static('./static'))
 
-var uri = 'http://localhost:' + port
+// var uri = 'http://localhost:' + port
+
+var uri;
+if (ip) {
+  uri = 'http://' + ip + ':' + port
+} else {
+  uri = 'http://localhost:' + port
+}
 
 devMiddleware.waitUntilValid(function () {
   console.log('> Listening at ' + uri + '\n')
 })
 
-module.exports = app.listen(port, function (err) {
+module.exports = app.listen(port, ip, function (err) {
   if (err) {
     console.log(err)
     return

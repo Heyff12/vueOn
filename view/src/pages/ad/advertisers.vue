@@ -462,6 +462,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less" rel="stylesheet/less">
 .bounced_my .bounced_my_body.big_bounced.mar_t_exp {
-    top: 10%;
+    //top: 10%;
 }
 </style>

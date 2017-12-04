@@ -8,7 +8,7 @@
                 <el-col :xs="24" :sm="24" :md="8" :lg="6">
                     <dl class="home_dl">
                         <dt>{{$t('home.dataBank.tradeData')}}</dt>
-                        <dd>{{$store.state.currency}}<span class="data_span">{{(yester_data.trade_amt/100).toFixed(2)}}</span></dd>
+                        <dd>{{$store.state.currency}}<span class="data_span">{{yester_data.trade_amt | crash_format($store.state.currency)}}</span></dd>
                     </dl>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="8" :lg="6">
@@ -20,13 +20,13 @@
                 <el-col :xs="24" :sm="24" :md="8" :lg="6">
                     <dl class="home_dl dl_three">
                         <dt>{{$t('home.dataBank.income')}}</dt>
-                        <dd>{{$store.state.currency}}<span class="data_span">{{(yester_data.net_amt/100).toFixed(2)}}</span></dd>
+                        <dd>{{$store.state.currency}}<span class="data_span">{{yester_data.net_amt | crash_format($store.state.currency)}}</span></dd>
                     </dl>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="24" :lg="6">
                     <dl class="home_dl dl_four">
                         <dd v-for="bank in yester_data.mchnt_rank">
-                            <!-- <img :src="bank.logo_url"> --><span class="grey">{{ bank.shopname }}</span><span class="grey">{{$store.state.currency}}{{ (bank.trade_amt/100).toFixed(2) }}</span>
+                            <!-- <img :src="bank.logo_url"> --><span class="grey">{{ bank.shopname }}</span><span class="grey">{{$store.state.currency}}{{ bank.trade_amt | crash_format($store.state.currency)}}</span>
                         </dd>
                     </dl>
                 </el-col>
@@ -54,6 +54,7 @@
 </template>
 <script>
 import echarts from 'echarts'
+import util from '../../method/util'
 export default {
     name: 'home',
     data() {
@@ -185,7 +186,9 @@ export default {
             this.$ajax_log.ajax_get(this, this.trade_url, '', (data_return) => {
                 _this.tradeAll_data = data_return.data;
                 _this.tradeAll_data.forEach(function(data) {
-                    _this.trade_x_data.push((data.pass_amt / 100).toFixed(2));
+                    let amt = util.crash_if_format(data.pass_amt,_this.$store.state.currency);
+                    _this.trade_x_data.push(amt);
+                    //_this.trade_x_data.push((data.pass_amt / 100).toFixed(2));
                     _this.trade_y_data.push(data.time.substr(11, 5));
                 });
                 setTimeout(() => {

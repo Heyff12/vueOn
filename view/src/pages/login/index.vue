@@ -30,6 +30,7 @@
 <script>
 import load from '../../components/load'
 import toast from '../../components/toast'
+import cookie from '../../method/cookie'
 export default {
     name: 'login',
     components: {
@@ -54,7 +55,7 @@ export default {
                 }],
                 password: [{
                     required: true,
-                    pattern: /^[a-zA-Z0-9]{6,20}$/,
+                    pattern: /^\S{6,20}$/,
                     message: this.$t('login.yanzhengPass'),
                     trigger: 'blur'
                 }],
@@ -70,8 +71,10 @@ export default {
     },
     methods: {
         langChange() {
-          localStorage.lang = this.searchkey.lan;
-          this.$i18n.locale = this.searchkey.lan;
+          localStorage.lang = this.searchkey.lan;//更改storage
+          cookie.SetCookie('lang', this.searchkey.lan, 1);//更改cookie的lang值
+          this.$i18n.locale = this.searchkey.lan;//更改当前语言包
+          this.$store.commit('t_language',this.searchkey.lan); //更改语言全局变量
           document.title=this.$t('login.qdSystem');//设置title
         },
         //监听toast是否可见的值得变化
@@ -100,7 +103,7 @@ export default {
             //         path: '/'
             //     });
             this.$ajax_log.ajax_post(this, this.login_url, _this.login, (data_return) => {
-                _this.$store.commit('login');
+                _this.$store.commit('login'); 
                 _this.$router.replace({
                         path: '/'
                     })

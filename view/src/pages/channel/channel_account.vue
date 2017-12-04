@@ -51,7 +51,7 @@
                         </el-col>
                         <el-col :xs="24" :sm="24" :md="12" :lg="8">
                             <el-form-item :label="$t('generalPro.bodyBank.startMoney')" prop="settle_base_amt">
-                                <el-input v-model.number="account.settle_base_amt" :disabled="true">
+                                <el-input v-model="account.settle_base_amt" :disabled="true">
                                     <template slot="append">{{$store.state.currency}}</template>
                                 </el-input>
                             </el-form-item>
@@ -119,6 +119,7 @@
     </div>
 </template>
 <script>
+import util from '../../method/util'
 export default {
     name: 'channel_account',
     data() {
@@ -217,8 +218,9 @@ export default {
             rules_account: {
                 bankuser: [{
                     required: true,
-                    pattern: /^[\u4e00-\u9fa5]{1,30}$/,
-                    message: '请输入收款账户，长度在 1 到 30 个字符',
+                    //pattern: /^[\u4e00-\u9fa5]{1,30}$/,
+                    pattern: /^\D{1,25}$/,
+                    message: '请输入收款账户，长度在 1 到 25 个字符',
                     trigger: 'blur'
                 }],
                 bankaccount: [{
@@ -382,7 +384,9 @@ export default {
             this.$ajax_log.ajax_get(this, this.qd_account_url, '', (data_return) => {
                 // //设置初始值
                 _this.account = data_return.data;
-                _this.account.settle_base_amt = (data_return.data.settle_base_amt / 100).toFixed(0);
+                _this.account.settle_base_amt = util.crash_if_format(data_return.data.settle_base_amt,_this.$store.state.currency);
+                //_this.account.settle_base_amt = (data_return.data.settle_base_amt / 100).toFixed(2);
+                //_this.account.settle_base_amt = util.crash_format(data_return.data.settle_base_amt);
             });
             // this.$http.get(this.qd_account_url, {
             //         before: function() {

@@ -35,7 +35,7 @@ var mchnt_trade_info = {
   "data|10-30": [{
     "time": Random.datetime('yyyy-MM-dd HH:mm'), // 时间
     "pass_nums|+4": 10, // 交易数
-    "pass_amt|+20": 12300, // 交易金额, 单位分
+    "pass_amt|+20": 1234500, // 交易金额, 单位分
   }],
 };
 Mock.mock(/qudao\/v1\/api\/statistic\/mchnt_trade/, 'get', mchnt_trade_info);
@@ -86,7 +86,7 @@ var qd_trade_info = {
   "data": {
     "summary": { // 总计
       "date": Random.datetime('yyyy-MM-dd'), // 开始日期
-      "pass_nums|+10": 100, // 入网商户数
+      "pass_nums|+10": 1234040, // 入网商户数
       "sub_qd_cnt|+10": 30 // 下级渠道个数
     },
     "detail|3-6": [{ // 各渠道详细数据
@@ -94,7 +94,7 @@ var qd_trade_info = {
       "trade|10-15": [{
         "time": Random.datetime('yyyy-MM-dd HH:mm'), // 时间
         "pass_nums|+10": 10, // 交易数
-        "pass_amt|+10": 123, // 交易金额, 单位分
+        "pass_amt|+50": 1234550, // 交易金额, 单位分
       }]
     }]
   },

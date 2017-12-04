@@ -29,6 +29,7 @@ export default new Vuex.Store({
     if_ad: 0, //当前渠道是否开通广告管理，开通=1, 未开通=0
     qd_level: 0, //当前渠道级别
     currency: '', //当前用户-币种
+    language: '', //当前选择的语言--取消使用
   },
   mutations: {
     login(state) {
@@ -63,6 +64,9 @@ export default new Vuex.Store({
     },
     t_currency(state, obj) {
       state.currency = obj;
+    },
+    t_language(state, obj) {
+      state.language = obj;
     },
     t_notice_read_no(state, obj) {
       state.notice_read_no = obj;

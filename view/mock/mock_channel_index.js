@@ -236,3 +236,45 @@ var qd_base = {
   }
 }
 Mock.mock(/base_info/, 'get', qd_base);
+
+//渠道关系
+var qd_relation = {
+  "respcd": "0000",
+  "respmsg": "OK",
+  "resperr": "",
+  "data": {
+    "records|20-200": [{
+      "qd_uid|+1": 12345678, // 渠道 userid
+      "name": Random.string(10),
+      "short_name": Random.string(10),
+      "status": Random.boolean(5, 5, 1), // 渠道状态: 0 启用, 1 禁用
+      "level|1": [1, 2, 3], //渠道级别
+    }], 
+  }
+}
+Mock.mock(/qudao\/v1\/api\/qd\/\d+\/relation/, 'get', qd_relation);
+//渠道账户信息
+var qd_account = {
+  "respcd": "0000",
+  "respmsg": "OK",
+  "resperr": "",
+  "data": {
+    "userid": 123, // 渠道编号
+    "bankaccount": "623300000", // 收款账户(网点账户号)
+    "bankuser": "张三", // 开户名称(网点开户名)
+    "headbankname": "中国银行", // 银行总行名称
+    "bankname": "朝阳门支行", // 银行开户行名称(网店名称/支行名称)
+    "banktype|1": [1,2], // 结算类型(账户类型): 1 对私, 2 对公
+    "bankcode": "1", // 联行号
+    "settle_cycle|1": [1,2,3], // 结算方式(结算周期): 1 实时, 2 月结, 3 季度结
+    "settle_base_amt": 1234550, // 起结金额, 单位: 分
+    "fee": 1.5,               // 手续费, 单位: 百分比, 弃用
+    "wechat_fee": 1.5, // 微信手续费
+    "alipay_fee": 1.5, // 支付宝手续费
+    "jd_fee": 1.5, // 京东手续费
+    "qqwallet_fee": 1.5, // QQ 钱包手续费
+    "swipecard_fee": 1.5, // 刷卡手续费
+    "default_mchnt_fee": 1.5, // 商户默认费率
+  }
+}
+Mock.mock(/account_info/, 'get', qd_account);

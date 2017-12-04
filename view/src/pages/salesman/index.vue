@@ -34,7 +34,7 @@
                         <el-form-item label-width="0" class="t_c">
                             <!-- <el-button type="default" @click="fresh_sub">刷新</el-button> -->
                             <el-button type="primary" @click="search_sub">{{$t('app.search')}}</el-button>
-                            <el-button type="default" @click="download_sub">{{$t('salesmanlList.searchBank.download')}}</el-button>
+                            <el-button type="default" @click="download_sub" v-show="$store.state.language!=='en'">{{$t('salesmanlList.searchBank.download')}}</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -55,7 +55,7 @@
                     </el-table-column>
                     <el-table-column prop="join_dtm" :label="$t('generalPro.bodyBank.regTime')" resizable min-width="170px">
                     </el-table-column>
-                    <el-table-column :label="$t('app.operate')" resizable min-width="100px">
+                    <el-table-column :label="$t('app.operate')" resizable min-width="240px">
                         <template scope="scope">
                             <el-button type="info" @click="open_dialog(scope.row.slsm_uid)">{{$t('salesmanlList.bodyBank.businessStatistics')}}</el-button>
                             <template v-if="!scope.row.slsm_status">
@@ -114,14 +114,14 @@
                 <el-table-column align="center" property="audit_succ" :label="$t('salesmanlList.bodyBank.auditSucess')" resizable min-width="100px"></el-table-column>
                 <el-table-column align="center" property="audit_fail" :label="$t('salesmanlList.bodyBank.auditError')" resizable min-width="100px"></el-table-column>
                 <el-table-column align="center" property="audit_reject" :label="$t('salesmanlList.bodyBank.auditReject')" resizable min-width="100px"></el-table-column>
-                <el-table-column align="center" property="trade_amt" :label="$t('salesmanlList.bodyBank.tradeMoney')" resizable min-width="100px">
+                <el-table-column align="center" property="trade_amt" :label="$t('salesmanlList.bodyBank.tradeMoney') + '/' + $store.state.currency" resizable min-width="100px">
                     <template scope="scope">
-                        {{scope.row.trade_amt | yuan}}
+                        {{scope.row.trade_amt | crash_format($store.state.currency)}}
                     </template>
                 </el-table-column>
             </el-table>
             <p class="dialog_p">
-                {{$t('salesmanlList.bodyBank.total')}}：{{$t('salesmanlList.bodyBank.merchantNum')}}{{saleman.total.mchnt_count}}{{$t('salesmanlList.bodyBank.unitGe')}}；{{$t('salesmanlList.bodyBank.auditSucess')}}{{saleman.total.audit_succ}}{{$t('salesmanlList.bodyBank.unitGe')}}；{{$t('salesmanlList.bodyBank.auditError')}}{{saleman.total.audit_fail}}{{$t('salesmanlList.bodyBank.unitGe')}}；{{$t('salesmanlList.bodyBank.auditReject')}}{{saleman.total.audit_reject}}{{$t('salesmanlList.bodyBank.unitGe')}}；{{$t('salesmanlList.bodyBank.tradeMoney')}}{{$store.state.currency}}{{saleman.total.trade_amt | yuan}}。
+                {{$t('salesmanlList.bodyBank.total')}}：{{$t('salesmanlList.bodyBank.merchantNum')}}{{saleman.total.mchnt_count}}{{$t('salesmanlList.bodyBank.unitGe')}}；{{$t('salesmanlList.bodyBank.auditSucess')}}{{saleman.total.audit_succ}}{{$t('salesmanlList.bodyBank.unitGe')}}；{{$t('salesmanlList.bodyBank.auditError')}}{{saleman.total.audit_fail}}{{$t('salesmanlList.bodyBank.unitGe')}}；{{$t('salesmanlList.bodyBank.auditReject')}}{{saleman.total.audit_reject}}{{$t('salesmanlList.bodyBank.unitGe')}}；{{$t('salesmanlList.bodyBank.tradeMoney')}}{{$store.state.currency}}{{saleman.total.trade_amt | crash_format($store.state.currency)}}。
             </p>
         </bounced>
         <bounced :visible="dialogcancle" :newclass="big_bounced">

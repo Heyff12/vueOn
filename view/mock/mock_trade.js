@@ -7,7 +7,7 @@ var trade_info = {
   "respmsg": "OK",
   "resperr": "",
   "data": {
-    "trade_cnt": 200,      // 商户数
+    "trade_cnt": 1800,      // 商户数
     "page": 1,
     "page_size": 10,
     "trade|50-80": [{
@@ -18,7 +18,7 @@ var trade_info = {
 	    "mchnt_mobile": /^1[0-9]{10}$/,       // 商户手机号
 	    "slsm_name": Random.name(),           // 业务员姓名
 	    "trade_syssn": "20170227123456",     // 交易流水号
-	    "trade_amt": 100,                    // 交易金额, 单位为分
+	    "trade_amt|+50": 1210050,                    // 交易金额, 单位为分
 	    "trade_fee": 100,                    // 手续费, 单位分
 	    "trade_dtm": Random.datetime('yyyy-MM-dd HH:mm:ss'),  // 交易时间
 	    "trade_type|1": ["微信","支付宝","刷卡"],                // 交易类型

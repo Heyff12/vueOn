@@ -15,7 +15,7 @@
             <el-menu-item index="/">
               <i class="icon_left icon_yester_w"></i>{{$t('menus.yesterdayData')}}
             </el-menu-item>
-            <el-submenu index="2">
+            <el-submenu index="2" v-show="searchkey.lan=='zh'">
               <template slot="title"><i class="icon_left icon_qudao_w"></i>{{$t('menus.qdManage')}}</template>
               <el-menu-item index="/channel_list">{{$t('menus.qdManage')}}</el-menu-item>
               <el-menu-item index="/channel_index">{{$t('menus.addQd')}}</el-menu-item>
@@ -32,7 +32,7 @@
               <template slot="title"><i class="icon_left icon_trade_w"></i>{{$t('menus.tradeManage')}}</template>
               <el-menu-item index="/trade_index">{{$t('menus.tradeManage')}}</el-menu-item>
             </el-submenu>
-            <el-submenu index="6">
+            <el-submenu index="6" v-show="searchkey.lan=='zh'">
               <template slot="title"><i class="icon_left icon_forms_w"></i>{{$t('menus.forms')}}</template>
               <el-menu-item index="/form_merchantin">{{$t('menus.formMerIn')}}</el-menu-item>
               <el-menu-item index="/form_merchant">{{$t('menus.formTrade')}}</el-menu-item>
@@ -41,24 +41,24 @@
               <el-menu-item index="/form_member">{{$t('menus.formSalesman')}}</el-menu-item>
               <el-menu-item index="/lost_merchant">{{$t('menus.formLostMer')}}</el-menu-item>
             </el-submenu>
-            <el-submenu index="7">
+            <el-submenu index="7" v-show="searchkey.lan=='zh'">
               <template slot="title"><i class="icon_left icon_settle_w"></i>{{$t('menus.settle')}}</template>
               <el-menu-item index="/s_merchant">{{$t('menus.merSettle')}}</el-menu-item>
               <el-menu-item index="/s_channel">{{$t('menus.qdFenrun')}}</el-menu-item>
             </el-submenu>
-            <template v-if="$store.state.qd_level==1 && $store.state.if_ad">
-              <el-submenu index="8">
+            <template v-if="$store.state.qd_level==1 && $store.state.if_ad  && searchkey.lan=='zh'">
+              <el-submenu index="8" v-show="searchkey.lan=='zh'">
                 <template slot="title"><i class="icon_left icon_ad_w"></i>{{$t('menus.ad')}}</template>
                 <el-menu-item index="/ad_advertisers">{{$t('menus.aders')}}</el-menu-item>
                 <el-menu-item index="/ad_ad">{{$t('menus.ad')}}</el-menu-item>
               </el-submenu>
             </template>
-            <el-submenu index="9">
+            <el-submenu index="9" v-show="searchkey.lan=='zh'">
               <template slot="title"><i class="icon_left icon_notice_w"></i>{{$t('menus.notice')}}</template>
               <el-menu-item index="/notice">{{$t('menus.notice')}}</el-menu-item>
               <el-menu-item index="/addNotice">{{$t('menus.addNotice')}}</el-menu-item>
             </el-submenu>
-            <template v-if="$store.state.qd_level==1">
+            <template v-if="$store.state.qd_level==1 && searchkey.lan=='zh'">
               <el-submenu index="10">
                 <template slot="title"><i class="icon_left icon_material_w"></i>{{$t('menus.meterial')}}</template>
                 <el-menu-item index="/material">{{$t('menus.meterial')}}</el-menu-item>
@@ -86,7 +86,7 @@
                                         <p class="arrow"><span></span></p>
                 <dt><!-- {{base.name}} -->{{$store.state.qudao_name}}</dt>
                 <dd><span @click="passdialog=true"><i class="icon_password"></i>{{$t('app.fixPass')}}</span></dd>
-                <dd>
+                <dd  v-show="searchkey.lan=='zh'">
                   <router-link :to="{ name: 'myfenrun' }"><span><i class="icon_fenrun"></i>{{$t('app.myFenrun')}}</span></router-link>
                 </dd>
                 </dl>
@@ -198,6 +198,7 @@
 <script>
 // import load from '../../components/load'
 // import toast from '../../components/toast'
+import cookie from './method/cookie'
 export default {
   name: 'app',
   // components: {
@@ -261,8 +262,9 @@ export default {
           message: this.$t('app.oldPass_input'),
           trigger: 'blur'
         }, {
-          min: 6,
-          max: 20,
+          // min: 6,
+          // max: 20,
+          pattern: /^\S{6,20}$/,
           message: this.$t('app.Pass_error'),
           trigger: 'blur'
         }],
@@ -271,8 +273,9 @@ export default {
           message: this.$t('app.newPass_input'),
           trigger: 'blur'
         }, {
-          min: 6,
-          max: 20,
+          // min: 6,
+          // max: 20,
+          pattern: /^\S{6,20}$/,
           message: this.$t('app.Pass_error'),
           trigger: 'blur'
         }],
@@ -297,6 +300,7 @@ export default {
         "can_modify": '', // 是否能够删除
       },
       searchkey: {
+        //lan: this.$store.state.language,
         lan: localStorage.lang,
       },
     }
@@ -309,7 +313,8 @@ export default {
     //测试数目变化
     // setTimeout(()=>{
     //     this.$store.commit('t_notice_read_no', '67');
-    // },2000);        
+    // },2000);  
+    document.title=this.$t('login.qdSystem');//设置title
   },
   computed: {
     login: function() {
@@ -320,15 +325,25 @@ export default {
         this.get_info(); //获取渠道信息 
         this.get_notice(); //获取通知弹框
         this.get_ifAd(); //获取是否开通广告管理 
+        this.searchkey.lan = localStorage.lang;//设置选中的语言
       }
       return this.$store.state.if_login
     }
   },
   methods: {
     langChange() {
-      localStorage.lang = this.searchkey.lan;
-      this.$i18n.locale = this.searchkey.lan;
+      localStorage.lang = this.searchkey.lan;//更改storage
+      cookie.SetCookie('lang', this.searchkey.lan, 1);//更改cookie的lang值
+      //console.log(cookie.GetCookie('lang'));
+      this.$i18n.locale = this.searchkey.lan;//更改当前语言包
+      this.$store.commit('t_language',this.searchkey.lan); //更改语言全局变量
       document.title=this.$t('login.qdSystem');//设置title
+      //window.location.reload();//整页刷新
+      // let path=this.$route.path;
+      // console.log(path);
+      // this.$router.replace({ path: this.$route.path });//没有变化
+      //this.$router.push({ path: this.$route.path });//没有变化
+      //this.$router.go(0);//整页刷新
     },
     //监听toast是否可见的值得变化
     onVisibleChange(val) {
@@ -462,7 +477,8 @@ export default {
     },
     //返回登录页
     tologin: function() {
-      window.location.href = location.protocol + '//' + location.host + '/qudao/v1/page/login.html'
+      window.location.href = location.protocol + '//' + location.host + '/qudao/v1/page/index.html#/login';
+      this.login_dialog = false; //关闭登陆页面弹框
     },
     //获取特定渠道的基本信息
     get_info: function() {
@@ -1614,12 +1630,12 @@ body {
 }
 
 //*自定义组建样式---------------------左侧导航z-index:12------------------------------------------------------------------------------------------------*/
-//加载动画load-------------------------z-index: 20;
+//加载动画load-------------------------z-index: 1020;
 #load_small_bg {
   width: 100%;
   height: 100%;
   position: fixed;
-  z-index: 10;
+  z-index: 1010;
   top: 0px;
   left: 0px;
   &:after {
@@ -1641,7 +1657,7 @@ body {
     margin-left: -60px;
     background: black;
     opacity: 0.7;
-    z-index: 20;
+    z-index: 1020;
     border-radius: 6px;
     font-size: 12px;
     span {
@@ -1668,7 +1684,7 @@ body {
   }
 }
 
-//文字提示toast-------------------------z-index: 20;
+//文字提示toast-------------------------z-index: 1020;
 div.nomoredata {
   width: 3.6rem;
   height: 1rem;
@@ -1679,7 +1695,7 @@ div.nomoredata {
   display: inline-block;
   background: black;
   position: fixed;
-  z-index: 20;
+  z-index: 1020;
   bottom: 1rem;
   border-radius: 3px;
   left: 50%;
@@ -1698,7 +1714,7 @@ div.toast_data {
   display: inline-block;
   background: #2F323A;
   position: fixed;
-  z-index: 20;
+  z-index: 1020;
   border-radius: 10px;
   opacity: 0;
   top: 50%;
@@ -1720,7 +1736,7 @@ div.toast_data_short {
   display: inline-block;
   background: #2F323A;
   position: fixed;
-  z-index: 20;
+  z-index: 1020;
   border-radius: 10px;
   opacity: .86;
   top: 50%;
@@ -1737,15 +1753,14 @@ div.toast_data_short {
   }
 }
 
-//自定义弹框样式bounced------------------------z-index: 20;
+//自定义弹框样式bounced------------------------z-index: 1020;
 .bounced_my {
   width: 100%;
   height: 100%;
   position: fixed;
-  z-index: 10;
   top: 0px;
   left: 0px;
-  z-index: 20;
+  z-index: 1020;
   font-size: 14px;
   &:after {
     content: '';
@@ -1757,14 +1772,24 @@ div.toast_data_short {
   }
   .bounced_my_body {
     position: absolute;
-    z-index: 21;
+    z-index: 1021;
     width: 360px;
-    padding: 0 0 35px;
+    padding: 0 0 0;
     background-color: white;
     border-radius: 3px;
-    top: 40%;
+    // top: 40%;
+    // left: 50%; 
+    // margin-left: -180px;   
+    top: 50%;
     left: 50%;
-    margin-left: -180px;
+    transform: translate(-50%, -50%);
+    // width: 360px;
+    // height:160px;
+    // left: 0;
+    // right:0;
+    // top: 0;
+    // bottom:0;
+    // margin:auto;
     header {
       width: 100%;
       height: 50px;
@@ -1795,6 +1820,7 @@ div.toast_data_short {
       text-align: center;
       p {
         margin-top: 30px;
+        padding-bottom: 35px;
       }
     } //弹框中单行文字
     .bounced_text {
@@ -1840,20 +1866,35 @@ div.toast_data_short {
     } //大弹框
     &.big_bounced {
       width: auto;
-      min-width: 460px; //max-width: 600px;
-      margin-left: -230px;
-      top: 30%;
+      min-width: 480px; //max-width: 600px;
+      max-height: 100%;
+      // margin-left: -230px;
+      // top: 30%;
+      // width: 60%; 
+      // height: 80%;
       header {
         display: block;
+      }
+      main {
+        max-height: 600px;
+        overflow-y: auto;
+        padding-bottom: 35px;
       }
     } //大弹框
     &.large_bounced {
       width: 80%;
-      margin-left: 0;
-      left: 10%;
-      top: 10%;
+      max-height: 100%;
+      // margin-left: 0;
+      // left: 10%;
+      // top: 10%;
+      //height: 80%;
       header {
         display: block;
+      }
+      main {
+        max-height: 600px;
+        overflow-y: auto;
+        padding-bottom: 35px;
       }
     }
   }
@@ -2001,5 +2042,11 @@ table {
             color: white;
         }
     }
+}
+//隐藏下拉菜单--商户列表--修改详情--支行无数据匹配
+.no_nomatch {
+  .el-select-dropdown__empty {
+    display: none;
+  }
 }
 </style>

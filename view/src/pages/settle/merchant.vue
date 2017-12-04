@@ -59,9 +59,14 @@
                             {{scope.row.trade_fee | yuan}}
                         </template>
                     </el-table-column> -->
-                    <el-table-column label="结算金额/元" resizable min-width="100px">
+                    <el-table-column :label="'结算金额/'+$store.state.currency" resizable min-width="100px">
                         <template scope="scope">
-                            {{scope.row.settle_amt | yuan}}
+                            {{scope.row.settle_amt | crash_format($store.state.currency)}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="操作" resizable min-width="100px">
+                        <template scope="scope">
+                          <el-button type="warning" @click="download(scope.row)">明细下载</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -89,7 +94,8 @@ export default {
                 'start_time': '',
                 'end_time': '',
             },
-            list_url: location.protocol + '//' + location.host + '/qudao/v1/api/settlement/mchnt_settle/list', //获取交易列表           
+            list_url: location.protocol + '//' + location.host + '/qudao/v1/api/settlement/mchnt_settle/list', //获取交易列表      
+            down_url: location.protocol + '//' + location.host + '/qudao/v1/api/settlement/mchnt_settle/download', //下载            
             pages_all: 0, //总信息数
             pages: 1, //总页数
             page_per: 10, //每页信息数
@@ -283,6 +289,21 @@ export default {
             } else {
                 return n;
             }
+        },
+        //明细下载
+        download(data_val) {
+          let _this = this;
+          let post_data = {
+            'biznum': data_val.biznum,
+            'mchnt_uid': data_val.mchnt_uid,
+          };
+          let url = this.down_url + '?';
+          let data;
+          for (data in post_data) {
+            url += data + '=' + post_data[data] + '&';
+          }
+          url = url.substr(0, url.length - 1);
+          window.open(url);
         },
         //列表测试数据--仅供测试
         getdata_test() {

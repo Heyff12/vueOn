@@ -18,6 +18,7 @@
 </template>
 <script>
 import echarts from 'echarts'
+import util from '../../method/util'
 
 export default {
     name: 'form_merchant',
@@ -66,7 +67,9 @@ export default {
             this.$ajax_log.ajax_get(this, this.form_url, post_data, (data_return) => {
                 _this.All_data = data_return.data;
                 _this.All_data.forEach(function(data) {
-                    _this.form_y_data.push((data.pass_amt / 100).toFixed(2));
+                    let amt = util.crash_if_format(data.pass_amt,_this.$store.state.currency);
+                    _this.form_y_data.push(amt);
+                    //_this.form_y_data.push((data.pass_amt / 100).toFixed(2));
                     _this.form_x_data.push(data.time.substr(11, 2));
                 });
                 setTimeout(() => {

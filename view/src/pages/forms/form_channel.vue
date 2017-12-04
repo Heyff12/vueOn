@@ -10,7 +10,7 @@
                     </el-date-picker>
                 </div>
                 <div class="line_body" id="form_pic"></div>
-                <h3 class="note">{{$t('forChanelTrade.bodyBank.desDate')}}：<span class="orange">{{note_data.date}}</span> ，{{$t('forChanelTrade.bodyBank.desChannel')}}：{{$store.state.currency}}<span class="orange">{{(note_data.pass_nums/100).toFixed(2)}}</span>，{{$t('forChanelTrade.bodyBank.desChannelNum')}}：<span class="orange">{{note_data.sub_qd_cnt}}</span>{{$t('forChanelTrade.bodyBank.unitGe')}}。</h3>
+                <h3 class="note">{{$t('forChanelTrade.bodyBank.desDate')}}：<span class="orange">{{note_data.date}}</span> ，{{$t('forChanelTrade.bodyBank.desChannel')}}：{{$store.state.currency}}<span class="orange">{{note_data.pass_nums | crash_format($store.state.currency)}}</span>，{{$t('forChanelTrade.bodyBank.desChannelNum')}}：<span class="orange">{{note_data.sub_qd_cnt}}</span>{{$t('forChanelTrade.bodyBank.unitGe')}}。</h3>
             </div>
         </div>
         <load :visible="loading"></load>
@@ -19,6 +19,7 @@
 </template>
 <script>
 import echarts from 'echarts'
+import util from '../../method/util'
 
 export default {
     name: 'form_merchant',
@@ -83,7 +84,9 @@ export default {
                 _this.All_data.detail.forEach(function(data) {
                     _this.legend_data.push(data.qd_name);
                     data.trade.forEach(function(item) {
-                        _this.form_y_data.push((item.pass_amt / 100).toFixed(2));
+                        let amt = util.crash_if_format(item.pass_amt,_this.$store.state.currency);
+                        _this.form_y_data.push(amt);
+                        // _this.form_y_data.push((item.pass_amt / 100).toFixed(2));
                         _this.form_x_data.push(item.time.substr(11, 2));
                     });
                 });
